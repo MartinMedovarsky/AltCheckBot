@@ -3,15 +3,13 @@ from praw.exceptions import APIException
 import time
 from threading import Thread
 import json
+import os
 
-with open('secret.json', 'r') as f:
-    secret = json.load(f)
-
-r = praw.Reddit(client_id=secret["client_id"],
-                client_secret=secret["client_secret"],
-                username=secret["username"],
-                password=secret["password"],
-                user_agent=secret["user_agent"])
+r = praw.Reddit(client_id=os.environ["client_id"],
+                client_secret=os.environ["client_secret"],
+                username=os.environ["bot_username"],
+                password=os.environ["password"],
+                user_agent=os.environ["user_agent"])
 
 # Function to convert seconds into something legible
 intervals = (
