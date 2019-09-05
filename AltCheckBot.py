@@ -13,10 +13,6 @@ r = praw.Reddit(client_id=secret["client_id"],
                 password=secret["password"],
                 user_agent=secret["user_agent"])
 
-subreddit = r.subreddit('RoomDecoration')
-
-keyphrase = '!altcheck'
-
 # Function to convert seconds into something legible
 intervals = (
     ('weeks', 604800),
@@ -46,14 +42,13 @@ def sharedComments(alt, owner, requestComment):
 
     totalCommentsFound = 0  # The total comments the suspected user has posted
     totalMatchingComments = 0  # The total comments that suspected user has posted on the owner's submissions
-    totalReplysToComments = 0  # The total comments that suspected user has replyed to an owner's comment
-    ReplysToCommentsInOwnerThread = 0  # Replies posted by suspected user to owner's comment in owner's thread
+    totalRepliesToComments = 0  # The total comments that suspected user has replied to an owner's comment
+    RepliesToCommentsInOwnerThread = 0  # Replies posted by suspected user to owner's comment in owner's thread
     totalMatchingCommentResponse = 0  # Total time taken to post a response
     avgMatchingCommentResponse = 0  # Average time to post a response
-    responseUnder15 = 0  # Responses created in under 10 minutes of the original post
+    responseUnder15 = 0  # Responses created in under 15 minutes of the original post
 
     # Loops through the comments posted by the suspected user
-    # print("Checkpoint2")
     for comment in rawComments:
         print("LOOP ITERATION")
         totalCommentsFound += 1
@@ -69,10 +64,10 @@ def sharedComments(alt, owner, requestComment):
         if hasattr(comment.parent().author, "name"):
             # Checks to see if the suspected alt has replied to a comment made by the owner
             if comment.parent().author.name == owner and comment.parent_id != comment.link_id:
-                totalReplysToComments += 1
+                totalRepliesToComments += 1
                 # Check if the reply to the owner was also in the owner's thread
                 if comment.submission.author == owner:
-                    ReplysToCommentsInOwnerThread += 1
+                    RepliesToCommentsInOwnerThread += 1
 
     avgMatchingCommentResponse = int((totalMatchingCommentResponse / totalMatchingComments))
     print("Findings: Total Comments: " + str(totalCommentsFound))
@@ -80,30 +75,90 @@ def sharedComments(alt, owner, requestComment):
     print("Average time to post response: " + str(avgMatchingCommentResponse) + "seconds")
     print("Responses under 15 minutes: " + str(responseUnder15))
 
+    # Calculation of likelihood of user being an alt
+    altJudgement = ""  # Variable determining how likely its an alt
+
+    judgmentArray = ["Very high chance of " + str(alt) + " being an alt",
+                     "High chance of " + str(alt) + " being an alt",
+                     "Moderate chance of " + str(alt) + " being an alt",
+                     "Low chance of " + str(alt) + " being an alt"]
+
+    criteria = [totalCommentsFound,
+                totalMatchingComments,
+                totalRepliesToComments,
+                RepliesToCommentsInOwnerThread,
+                totalMatchingCommentResponse,
+                avgMatchingCommentResponse,
+                responseUnder15]
+
+    # If statements that try to determine the likelihood of the account being an alt
+
+    if totalCommentsFound < 10:
+        altJudgement = "Less than 10 user comments retrieved, not enough data to make a judgement"
+    else:
+        valA = 0.75
+        valB = 0.6
+        valC = 0.5
+
+        for i in range(0,2):
+            print("FOR LOOP WORKING" + str(i))
+
+            if criteria[1] > (criteria[0] * valA) or criteria[2] > (criteria[0] * valA) or criteria[6] > (criteria[0] * valB):
+                altJudgement = judgmentArray[i]
+                print("selection made: Iteration 1," + str(i))
+                break
+            elif criteria[1] > (criteria[0] * valB) and criteria[2] > (criteria[0] * valB):
+                altJudgement = judgmentArray[i]
+                print("selection made: Iteration 2," + str(i))
+                break
+            elif criteria[1] > (criteria[0] * valB) and criteria[6] > (criteria[0] * valC):
+                altJudgement = judgmentArray[i]
+                print("selection made: Iteration 3," + str(i))
+                break
+            elif criteria[1] > (criteria[0] * valB) and criteria[3] > (criteria[0] * valC):
+                altJudgement = judgmentArray[i]
+                print("selection made: Iteration 4," + str(i))
+                break
+
+            valA -= 0.1
+            valB -= 0.1
+            valC -= 0.1
+
+        if altJudgement == "":
+            print(altJudgement)
+            altJudgement = judgmentArray[3]
+            print("NOT AN ALT")
+
     # Bot's reply to the summoning comment
     botReply = ("##Findings about " + str(alt) + ":"
                 "\n\n**Total comments** retrieved from " + str(alt) + ": " + str(totalCommentsFound) +
                 "\n\n**Comments** posted by " + str(alt) + " in " + str(owner) + "\'s threads: " + str(totalMatchingComments) +
-                "\n\n**Replies** made by " + str(alt) + " to comments made by " + str(owner) + ": " + str(totalReplysToComments) +
-                "\n\n**Replies** made by " + str(alt) + " to comments made by " + str(owner) + " in " + str(owner) + "'s threads: " + str(ReplysToCommentsInOwnerThread) +
+                "\n\n**Replies** made by " + str(alt) + " to comments made by " + str(owner) + ": " + str(totalRepliesToComments) +
+                "\n\n**Replies** made by " + str(alt) + " to comments made by " + str(owner) + " in " + str(owner) + "'s threads: " + str(RepliesToCommentsInOwnerThread) +
                 "\n\n**Average time taken** by " + str(alt) + " to reply to " + str(owner) + "\'s threads after their creation: " + str(display_time(avgMatchingCommentResponse)) +
                 "\n\n**Comments posted** by " + str(alt) + " in " + str(owner) + "\'s threads **less then 15 minutes** after their creation: " + str(responseUnder15) +
+                "\n\n**" + altJudgement + "**" +
                 "\n\n  ***  \n\n"
-                "^(Find out more about this bot [here](https://www.reddit.com/user/AltCheckBot/comments/csg0z1/bot_information/) | Please downvote me if i\'m wrong)")
+                "^(Find out more [here](https://www.reddit.com/user/AltCheckBot/comments/csg0z1/bot_information/) | [Github](https://github.com/MartinMedovarsky/AltCheckBot) | Please downvote me if i\'m wrong)")
 
     # print("Checkpoint3")
     requestComment.reply(botReply)
 
 
 # look for phrase and reply appropriately
+
+keyphrase = '!altcheck'
+
 def main():
-    for comment in subreddit.stream.comments(skip_existing=True):
+    for comment in r.subreddit('all').stream.comments(skip_existing=True):
         if keyphrase in comment.body:
             owner = comment.body.split(" ")
             print(owner)
 
+            print(comment.submission.author, comment.parent().author.name)
+
             # Checks that the summon is a reply and not a parent comment
-            if hasattr(comment.parent().author, "name"):
+            if comment.submission.author != comment.parent().author.name:
 
                 # Checks if the bot has been called with a specified owner
                 if len(owner) == 1:
@@ -124,10 +179,11 @@ def main():
                         print("error caught, broke out")
                         continue
 
-                print(owner)
-                alt = comment.parent().author.name
-                requestComment = comment
-                sharedComments(alt, owner[1], requestComment)
+                    alt = comment.parent().author.name
+                    if owner[1] != alt:
+                        print(owner)
+                        requestComment = comment
+                        sharedComments(alt, owner[1], requestComment)
 
 
 # Function used to check and delete the bot's comments under -2 votes
