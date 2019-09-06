@@ -21,12 +21,12 @@ I will then reply to you with the following information:
 
 If required, down vote the bot and it will delete its comment after -1 votes
 
-## Information about the programming:
+## Guide:
 
 ### How to install:
 
 * `git clone` the project
-* `pip install -r requirements.txt` to install dependencies
+* `pip3 install -r requirements.txt` to install dependencies
 * Create a [Reddit app](http://reddit.com/prefs/apps) as script
 * Set a valid `username`, `password`, `client_id`, `client_secret` and `user_agent` in the `altCheckBot.py` file or set it through environment variables
 
