@@ -140,7 +140,10 @@ def sharedComments(alt, owner, requestComment):
                 "^(Find out more [here](https://www.reddit.com/user/AltCheckBot/comments/csg0z1/bot_information/) | [Github](https://github.com/MartinMedovarsky/AltCheckBot) | Please downvote me if i\'m wrong)")
 
     # print("Checkpoint3")
-    requestComment.reply(botReply)
+    try:
+        requestComment.reply(botReply)
+    except:
+        main()
 
 
 # look for phrase and reply appropriately
