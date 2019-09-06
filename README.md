@@ -1,12 +1,12 @@
 # AltCheckBot
-Reddit bot used to identify if someone might be using an alternate account
+AltCheckBot is a Reddit bot used to identify if someone might be using an alternate account
 
-## Instructions for using the bot within reddit:
-Reply !altcheck to the comment of a user you suspect to be an alternate account of the original thread's author.
+## Instructions for using the bot within Reddit:
+Reply `!altcheck` to the comment of a user you suspect to be an alternate account of the original thread's author.
 
 Or
 
-Reply !altcheck username to the suspected alt with "username" being the username of the suspected owner
+Reply `!altcheck username` to the suspected alt with "username" being the username of the suspected owner. This can be just their username or with a /u/ prefix.
 
 I will then reply to you with the following information:
 
@@ -19,6 +19,21 @@ I will then reply to you with the following information:
 
 **Deleting replies:**
 
-If required, downvote the bot and it will delete its comment after -1 votes
+If required, down vote the bot and it will delete its comment after -1 votes
 
-## Information about the programming
+---
+## Information about the programming:
+
+### How to install:
+
+* `git clone` the project
+* `pip install -r requirements.txt` to install dependencies
+* Create a [Reddit app](http://reddit.com/prefs/apps) as script
+* Set a valid `username`, `password`, `client_id`, `client_secret` and `user_agent` in the `altCheckBot.py` file or set it through environment variables
+
+### Misc Information:
+* The alt judgement function is currently a bit inaccurate as I require more data to set some accurate standards. I'm also quite new to this. 
+
+MIT License
+
+
