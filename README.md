@@ -21,7 +21,6 @@ I will then reply to you with the following information:
 
 If required, down vote the bot and it will delete its comment after -1 votes
 
----
 ## Information about the programming:
 
 ### How to install:
