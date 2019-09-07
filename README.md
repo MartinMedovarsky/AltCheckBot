@@ -16,6 +16,7 @@ I will then reply to you with the following information:
 - The amount of replies made by the alt account to the main account's comments in the main account's threads
 - The average time after creation of the main account's posts that it takes the alt to comment
 - The amount of comments posted by the alt in the main account's thread within 15 minutes of the post being created
+- A judgement giving the likelihood of the account being an alt
 
 **Deleting replies:**
 
