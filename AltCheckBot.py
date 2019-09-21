@@ -1,5 +1,6 @@
 import praw
 from praw.exceptions import APIException
+from psaw import PushshiftAPI
 import time
 from threading import Thread
 import json
@@ -10,6 +11,9 @@ r = praw.Reddit(client_id=os.environ["client_id"],
                 username=os.environ["bot_username"],
                 password=os.environ["password"],
                 user_agent=os.environ["user_agent"])
+
+#short hand for psaw
+api = PushshiftAPI(r)
 
 # Function to convert seconds into something legible
 intervals = (
@@ -151,8 +155,19 @@ def sharedComments(alt, owner, requestComment):
 keyphrase = '!altcheck'
 
 def main():
-    for comment in r.subreddit('all').stream.comments(skip_existing=True):
-        if keyphrase in comment.body:
+    search_time = time.time()
+    while True:
+        gen = api.search_comments(after=int(search_time), q=keyphrase)
+        newComment = True
+
+        for comment in gen:
+            
+            #checks that the comment retrieved hasn't already been responded to by bot
+            if newComment:
+                    search_time = comment.created_utc
+                    print (search_time)
+                    newComment = False
+
             owner = comment.body.split(" ")
             print(owner)
 
