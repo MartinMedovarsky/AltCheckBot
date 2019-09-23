@@ -141,7 +141,7 @@ def sharedComments(alt, owner, requestComment):
                 "\n\n**Comments posted** by " + str(alt) + " in " + str(owner) + "\'s threads **less then 15 minutes** after their creation: " + str(responseUnder15) +
                 "\n\n**" + altJudgement + "**" +
                 "\n\n  ***  \n\n"
-                "^(Find out more [here](https://www.reddit.com/user/AltCheckBot/comments/csg0z1/bot_information/) | [Github](https://github.com/MartinMedovarsky/AltCheckBot) | Please downvote me if i\'m wrong)")
+                "^(Find out more on my pinned post | Please downvote me if i\'m wrong)")
 
     # print("Checkpoint3")
     try:
